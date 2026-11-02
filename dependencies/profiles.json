@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "revision_source": "gitlink",
+  "profiles": {
+    "core": [],
+    "data": [],
+    "sim": [
+      "external/humanoid_benchmark",
+      "external/g1_backend"
+    ],
+    "real": [
+      "external/g1_backend"
+    ],
+    "wbc": [
+      "external/GR00T-WholeBodyControl"
+    ],
+    "act": [
+      "external/lerobot"
+    ],
+    "dp": [
+      "external/lerobot"
+    ],
+    "dm05": [
+      "external/opendm"
+    ],
+    "gr00t": [
+      "external/Isaac-GR00T"
+    ],
+    "fastwam": [
+      "external/FastWAM"
+    ],
+    "starvla": [
+      "external/starVLA"
+    ],
+    "prts": [
+      "external/PRTS"
+    ],
+    "pi05": [
+      "external/openpi"
+    ],
+    "psi0": [
+      "external/Psi0"
+    ],
+    "internvla_a15": [
+      "external/InternVLA-A1.5"
+    ],
+    "dreamzero": [
+      "external/dreamzero"
+    ],
+    "xr1": [
+      "external/Xiaomi-Robotics-1"
+    ],
+    "gr00t-real": [
+      "external/Isaac-GR00T",
+      "external/GR00T-WholeBodyControl"
+    ],
+    "fastwam-real": [
+      "external/FastWAM",
+      "external/Isaac-GR00T",
+      "external/GR00T-WholeBodyControl"
+    ]
+  }
+}

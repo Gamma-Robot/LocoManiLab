@@ -1,0 +1,28 @@
+# Copy to workspaces/pi05/env.local.yaml from the main repository root.
+# Schema v2 resolves these paths relative to that workspace, not this example.
+schema_version: 2
+role: [data, train, deploy, eval]
+
+repos:
+  openpi: ../../external/openpi
+  # Used only for optional closed-loop simulation:
+  sim_repo: ../../external/humanoid_benchmark
+  g1_backend: ../../external/g1_backend
+
+paths:
+  datasets_root: datasets
+  # Native openpi download/tokenizer cache. No download occurs when loading YAML.
+  openpi_data_home: cache/openpi
+  # Local Orbax params, needed for training from the pi05 base model.
+  pi05_base: cache/openpi/openpi-assets/checkpoints/pi05_base/params
+  # Dataset-bound normalization statistics and the main adapter's provenance file.
+  pi05_assets: artifacts/pi05
+  pi05_outputs: checkpoints/pi05
+  logs: runs
+
+deploy: {}
+conda_envs: {}
+# The pi05 adapter uses the openpi checkout's uv environment, not conda.
+# Optional simulation uses a separately provisioned conda env, selected with
+# --sim-env (default: tele_benchmark). Configure conda_root or paths.conda_setup
+# only when required by your local conda installation.

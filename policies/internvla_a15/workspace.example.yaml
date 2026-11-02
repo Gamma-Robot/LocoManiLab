@@ -1,0 +1,17 @@
+# Intended destination: workspaces/internvla_a15/env.local.yaml.
+schema_version: 2
+role: [data, train, deploy, eval]
+repos:
+  internvla_a15: ../../external/InternVLA-A1.5
+  sim_repo: ../../external/humanoid_benchmark
+  g1_backend: ../../external/g1_backend
+paths:
+  internvla_a15_data_root: datasets/internvla_a15
+  internvla_a15_base: weights/InternVLA-A1.5-g1-sonic
+  internvla_a15_vlm: weights/Qwen3.5-2B
+  internvla_a15_outputs: checkpoints/internvla_a15
+  logs: runs
+deploy: {}
+conda_envs:
+  internvla_a15: internvla_a1_5
+# Configure conda_root or paths.conda_setup for a nonstandard conda installation.

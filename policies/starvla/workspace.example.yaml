@@ -1,0 +1,15 @@
+# Copy to workspaces/starvla/env.local.yaml from the LocoManiLab checkout root.
+# Moving this file elsewhere requires adjusting repos.* to your own checkouts.
+schema_version: 2
+role: [data, train, eval]
+repos:
+  starvla: ../../external/starVLA
+  # Optional simulation/controller sources; unused by the CPU walkthrough.
+  sim_repo: ../../external/humanoid_benchmark
+  g1_backend: ../../external/g1_backend
+paths:
+  starvla_outputs: outputs/starvla
+  logs: runs
+deploy: {}
+conda_envs:
+  starvla: starVLA

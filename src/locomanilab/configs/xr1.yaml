@@ -1,0 +1,66 @@
+# xr1 integration defaults. Local paths belong in env.local.yaml.
+name: xr1
+embodiment: unitree_g1_sonic
+repo_key: xr1
+action:
+  dim: 78
+  layout:
+  - motion_token:64
+  - left_hand:7
+  - right_hand:7
+  model_dim: 80
+envs:
+  convert:
+    kind: conda
+    name: xr1
+  train:
+    kind: conda
+    name: xr1
+  deploy:
+    kind: conda
+    name: xr1
+convert:
+  converter: scripts/data/locomanilab_sonic_to_xr1_json.py
+  stats_script: scripts/data/compute_xr1_stats.py
+  config_prefix: locomanilab_
+  action_length: 30
+  batch_size: 4
+  require_modality:
+    video:
+    - ego_view
+    action:
+    - motion_token
+    - left_hand_joints
+    - right_hand_joints
+    state:
+    - joint_pos
+train:
+  launcher: scripts/train.sh
+  subdir: xr1
+  project: locomanilab
+  model_config: posttrain_sonic
+  action_dim: 80
+  action_length: 30
+  max_steps: 20000
+  save_interval: 5000
+  max_length: 20000
+  env:
+    WANDB_MODE: offline
+    TOKENIZERS_PARALLELISM: 'false'
+    PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True
+    HF_HUB_OFFLINE: '1'
+    TRANSFORMERS_OFFLINE: '1'
+deploy:
+  module: deploy/run_xr1_server.py
+  port: 5550
+  ckpt_name: last.ckpt
+  prompt_fixed: test
+  prefix_len: 0
+  replan_steps: 20
+  num_steps: null
+  chunk_gain: 1.0
+  env:
+    HF_HUB_OFFLINE: '1'
+    TRANSFORMERS_OFFLINE: '1'
+    TOKENIZERS_PARALLELISM: 'false'
+support: Integration adapter; model execution requires its external backend and separately obtained weights.

@@ -1,0 +1,113 @@
+# dreamzero integration defaults. Local paths belong in env.local.yaml.
+name: dreamzero
+embodiment: unitree_g1_sonic
+repo_key: dreamzero
+action:
+  dim: 78
+  layout:
+  - motion_token:64
+  - left_hand:7
+  - right_hand:7
+  note: max_action_dim is set to 78 by the data config; the shared default is 32 and would TRUNCATE the action without
+    erroring.
+envs:
+  convert:
+    kind: conda
+    name: dreamzero
+  train:
+    kind: conda
+    name: dreamzero
+  deploy:
+    kind: conda
+    name: dreamzero
+convert:
+  converter: scripts/data/convert_lerobot_to_gear.py
+  embodiment_tag: unitree_g1_sonic
+  require_modality:
+    video:
+    - ego_view
+  data_root_key: dreamzero_data_root
+variants:
+  sonic:
+    detect:
+      action:
+      - motion_token
+    embodiment_tag: unitree_g1_sonic
+    data_config_base: dreamzero/unitree_g1_sonic_relative
+    data_root_key: unitree_g1_sonic_data_root
+    action_dim: 78
+  amo:
+    detect:
+      action:
+      - torso_vx
+      - target_yaw
+    embodiment_tag: unitree_g1_amo
+    data_config_base: dreamzero/unitree_g1_amo_relative
+    data_root_key: unitree_g1_amo_data_root
+    action_dim: 36
+backbones:
+  wan22:
+    data_config_suffix: _wan22
+    action_head: wan_flow_matching_action_tf_wan22
+    dit_path_key: dreamzero_wan22
+    text_encoder: models_t5_umt5-xxl-enc-bf16.pth
+    vae: Wan2.2_VAE.pth
+    image_encoder_path_key: dreamzero_wan21
+    image_encoder: models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth
+    tokenizer_path_key: dreamzero_tokenizer
+  wan21:
+    data_config_suffix: ''
+    action_head: wan_flow_matching_action_tf
+    dit_path_key: dreamzero_wan21
+    text_encoder: models_t5_umt5-xxl-enc-bf16.pth
+    vae: Wan2.1_VAE.pth
+    image_encoder_path_key: dreamzero_wan21
+    image_encoder: models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth
+    tokenizer_path_key: dreamzero_tokenizer
+    pretrained_path_key: dreamzero_pretrained
+    image_resolution:
+    - 176
+    - 320
+    frame_seqlen: 220
+default_backbone: wan22
+train:
+  entrypoint: groot/vla/experiment/experiment.py
+  deepspeed: groot/vla/configs/deepspeed/zero2.json
+  model: dreamzero/vla
+  transform: dreamzero_cotrain
+  data_root_key: unitree_g1_sonic_data_root
+  train_architecture: full
+  deepspeed_full: groot/vla/configs/deepspeed/zero3.json
+  defaults:
+    num_views: 1
+    num_frames: 17
+    action_horizon: 32
+    num_frame_per_block: 2
+    num_action_per_block: 32
+    num_state_per_block: 1
+    max_chunk_size: 2
+    per_device_batch_size: 1
+    max_train_steps: 15000
+    max_state_dim: 43
+    save_steps: 2000
+    save_total_limit: 10
+    learning_rate: 1.0e-05
+    weight_decay: 1.0e-05
+    warmup_ratio: 0.05
+    dataloader_num_workers: 1
+    seed: 42
+  env:
+    WANDB_MODE: offline
+    HYDRA_FULL_ERROR: '1'
+deploy:
+  gr00t_server: deployment/run_dreamzero_server.py
+  port: 5550
+  embodiment_tag: unitree_g1_sonic
+  prompt_fixed: test
+  video_frames_per_chunk: 8
+  inference_rate: 2.0
+ckpt:
+  root: checkpoints
+  run_glob: '*'
+  ckpt_glob: checkpoint-*
+support: Integration adapter; model execution requires its external backend and separately obtained weights.

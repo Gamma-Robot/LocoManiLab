@@ -1,0 +1,50 @@
+# dm05 integration defaults. Local paths belong in env.local.yaml.
+name: dm05
+embodiment: unitree_g1_sonic
+repo_key: opendm
+action:
+  dim: 78
+  layout:
+  - motion_token:64
+  - left_hand:7
+  - right_hand:7
+  model_dim: 78
+envs:
+  convert:
+    kind: conda
+    name: opendm
+  train:
+    kind: conda
+    name: opendm
+  deploy:
+    kind: conda
+    name: opendm
+convert:
+  dataset_prefix: locomanilab_
+train:
+  launcher: script/dm05_launcher.sh
+  exp: dm05/experiment.py
+  per_device_batch_size: 8
+  max_steps: 50000
+  save_steps: 10000
+  save_total_limit: 3
+  chunk_size: 50
+  vision_attn_implementation: sdpa
+  env:
+    WANDB_MODE: disabled
+    TOKENIZERS_PARALLELISM: 'false'
+    HF_HUB_OFFLINE: '1'
+    TRANSFORMERS_OFFLINE: '1'
+    OMP_NUM_THREADS: '8'
+deploy:
+  module: dm05/server.py
+  port: 5550
+  dataset_name: locomanilab_train50_merged
+  diffusion_steps: 10
+  prompt_fixed: null
+  env:
+    TOKENIZERS_PARALLELISM: 'false'
+    HF_HUB_OFFLINE: '1'
+    TRANSFORMERS_OFFLINE: '1'
+    WANDB_MODE: disabled
+support: Integration adapter; model execution requires its external backend and separately obtained weights.

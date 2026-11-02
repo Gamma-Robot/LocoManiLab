@@ -1,0 +1,18 @@
+# Copy to workspaces/fastwam/env.local.yaml from the LocoManiLab checkout root.
+# Moving this file elsewhere requires adjusting repos.* to your own checkouts.
+schema_version: 2
+role: [data, train, eval]
+repos:
+  fastwam: ../../external/FastWAM
+  # Optional native full-robot deployment sources; unused by CPU/train/sim server.
+  isaac_gr00t: ../../external/Isaac-GR00T
+  gr00t_wbc: ../../external/GR00T-WholeBodyControl
+  # Optional simulation/controller sources; unused by the CPU walkthrough.
+  sim_repo: ../../external/humanoid_benchmark
+  g1_backend: ../../external/g1_backend
+paths:
+  fastwam_outputs: outputs/fastwam
+  logs: runs
+deploy: {}
+conda_envs:
+  fastwam: fastwam

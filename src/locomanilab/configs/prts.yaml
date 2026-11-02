@@ -1,0 +1,131 @@
+# prts integration defaults. Local paths belong in env.local.yaml.
+name: prts
+embodiment: unitree_g1_sonic
+repo_key: prts
+action:
+  dim: 78
+  layout:
+  - motion_token:64
+  - left_hand:7
+  - right_hand:7
+  note: PRTS trains with --max-action-dim (>= real dim); G1 needs 78. launch default is 32.
+envs:
+  convert:
+    kind: conda
+    name: prts
+  train:
+    kind: conda
+    name: prts
+  deploy:
+    kind: conda
+    name: prts
+convert:
+  compute_stats: scripts/compute_stats.py
+  data_config: configs/post-train/g1_sonic.yaml
+  robot_type: G1NewFloatingBody
+  require_modality:
+    video:
+    - ego_view
+    action:
+    - motion_token
+    state:
+    - left_arm
+    - right_arm
+    - left_hand
+    - right_hand
+    - waist
+variants:
+  sonic:
+    detect:
+      action:
+      - motion_token
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - motion_token
+      state:
+      - left_arm
+      - right_arm
+      - left_hand
+      - right_hand
+      - waist
+    data_config: configs/post-train/g1_sonic_all31.yaml
+    embodiment_tag: unitree_g1_sonic
+    action_dim: 78
+  heft:
+    detect:
+      action:
+      - ref_joint_pos
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - ref_root_pos
+      - ref_root_quat
+      - ref_joint_pos
+      state:
+      - left_leg
+      - right_leg
+      - waist
+      - left_arm
+      - right_arm
+    data_config: configs/post-train/g1_heft_openfridge.yaml
+    embodiment_tag: unitree_g1_heft
+    action_dim: 50
+  amo:
+    detect:
+      action:
+      - torso_vx
+      - target_yaw
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - left_arm
+      - right_arm
+      - rpy
+      - height
+      - torso_vx
+      - torso_vy
+      - torso_vyaw
+      - target_yaw
+      state:
+      - left_hand
+      - right_hand
+      - left_arm
+      - right_arm
+      - rpy
+      - height
+    data_config: configs/post-train/g1_amo_closefridge.yaml
+    embodiment_tag: unitree_g1_amo
+    action_dim: 36
+train:
+  entrypoint: scripts/train.py
+  deepspeed: configs/zero2.json
+  data_config: configs/post-train/g1_sonic_all31.yaml
+  embodiment_tag: unitree_g1_sonic
+  base_model: TeleEmbodied/PRTS-4B
+  attn: sdpa
+  rope_type: qwen3_vl
+  defaults:
+    per_device_batch_size: 4
+    max_train_steps: 20000
+    save_steps: 10000
+    chunk_size: 20
+    action_dim: 78
+    state_mode: QUANTILE
+    warmup_steps: 5000
+  env:
+    WANDB_MODE: offline
+deploy:
+  websocket_server: scripts/serve_policy.py
+  websocket_port: 10000
+  gr00t_server: deployment/run_prts_server.py
+  state_mode: QUANTILE
+  prompt_fixed: test
+ckpt:
+  root: outputs
+  run_glob: '*'
+  ckpt_glob: checkpoint-*
+support: Integration adapter; model execution requires its external backend and separately obtained weights.

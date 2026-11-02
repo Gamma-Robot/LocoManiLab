@@ -1,0 +1,56 @@
+[submodule "external/FastWAM"]
+	path = external/FastWAM
+	url = https://github.com/LocoManiLab/FastWAM.git
+	branch = main
+[submodule "external/Isaac-GR00T"]
+	path = external/Isaac-GR00T
+	url = https://github.com/LocoManiLab/Isaac-GR00T.git
+	branch = main
+[submodule "external/GR00T-WholeBodyControl"]
+	path = external/GR00T-WholeBodyControl
+	url = https://github.com/LocoManiLab/GR00T-WholeBodyControl.git
+	branch = main
+[submodule "external/starVLA"]
+	path = external/starVLA
+	url = https://github.com/LocoManiLab/starVLA.git
+	branch = main
+[submodule "external/humanoid_benchmark"]
+	path = external/humanoid_benchmark
+	url = https://github.com/LocoManiLab/humanoid_benchmark.git
+	branch = main
+[submodule "external/PRTS"]
+	path = external/PRTS
+	url = https://github.com/LocoManiLab/PRTS.git
+	branch = main
+[submodule "external/openpi"]
+	path = external/openpi
+	url = https://github.com/LocoManiLab/openpi.git
+	branch = main
+[submodule "external/g1_backend"]
+	path = external/g1_backend
+	url = https://github.com/LocoManiLab/g1_backend.git
+	branch = main
+[submodule "external/Psi0"]
+	path = external/Psi0
+	url = https://github.com/LocoManiLab/Psi0.git
+	branch = main
+[submodule "external/lerobot"]
+	path = external/lerobot
+	url = https://github.com/huggingface/lerobot.git
+	branch = main
+[submodule "external/InternVLA-A1.5"]
+	path = external/InternVLA-A1.5
+	url = https://github.com/LocoManiLab/InternVLA-A1.5.git
+	branch = main
+[submodule "external/dreamzero"]
+	path = external/dreamzero
+	url = https://github.com/LocoManiLab/dreamzero.git
+	branch = main
+[submodule "external/Xiaomi-Robotics-1"]
+	path = external/Xiaomi-Robotics-1
+	url = https://github.com/LocoManiLab/Xiaomi-Robotics-1.git
+	branch = main
+[submodule "external/opendm"]
+	path = external/opendm
+	url = https://github.com/Dexmal/OpenDM.git
+	branch = main

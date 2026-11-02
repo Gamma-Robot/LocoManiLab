@@ -1,0 +1,95 @@
+# internvla_a15 integration defaults. Local paths belong in env.local.yaml.
+name: internvla_a15
+embodiment: unitree_g1_sonic
+repo_key: internvla_a15
+action:
+  dim: 78
+  layout:
+  - motion_token:64
+  - left_hand:7
+  - right_hand:7
+envs:
+  convert:
+    kind: conda
+    name: internvla_a1_5
+  train:
+    kind: conda
+    name: internvla_a1_5
+  deploy:
+    kind: conda
+    name: internvla_a1_5
+convert:
+  converter: scripts/data/locomanilab_lerobot_v21_to_v30.py
+  schema_file: src/lerobot/dataset_schemas/configs/unitree_g1_sonic.yaml
+  robot_type: unitree_g1_sonic
+  require_modality:
+    video:
+    - ego_view
+    action:
+    - motion_token
+    state:
+    - left_arm
+    - right_arm
+    - left_hand
+    - right_hand
+    - waist
+variants:
+  sonic:
+    detect:
+      action:
+      - motion_token
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - motion_token
+      state:
+      - left_arm
+      - right_arm
+      - left_hand
+      - right_hand
+      - waist
+    robot_type: unitree_g1_sonic
+    action_dim: 78
+    state_dim: 43
+train:
+  entrypoint: src/lerobot/scripts/lerobot_train.py
+  policy_type: internvla_a1_5
+  dataset_type: internvla_a1_5
+  defaults:
+    max_action_dim: 78
+    max_state_dim: 43
+    chunk_size: 50
+    action_mode: abs
+    action_loss_only: true
+    enable_vqa_loss: false
+    tokenize_state: true
+    use_fast_action_tokens: false
+    steps: 60000
+    batch_size: 8
+    save_freq: 5000
+    log_freq: 200
+    num_workers: 8
+    lr: 5.0e-05
+    warmup_steps: 2000
+    decay_steps: 60000
+    decay_lr: 5.0e-06
+    seed: 42
+  env:
+    WANDB_MODE: offline
+    TOKENIZERS_PARALLELISM: 'false'
+    HF_HUB_OFFLINE: '1'
+    TRANSFORMERS_OFFLINE: '1'
+    OMP_NUM_THREADS: '1'
+    MKL_NUM_THREADS: '1'
+    CUDA_HOME: /usr/local/cuda-12.8
+deploy:
+  module: deployment/run_internvla_server.py
+  port: 5550
+  robot_type: unitree_g1_sonic
+  prompt_fixed: test
+  resize_size: 224
+  max_prompt_length: 650
+  inference_backend: standard
+  inference_rate: null
+support: Integration adapter; model execution requires its external backend and separately obtained weights.

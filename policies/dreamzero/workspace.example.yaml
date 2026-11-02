@@ -1,0 +1,21 @@
+# Intended destination: workspaces/dreamzero/env.local.yaml.
+schema_version: 2
+role: [data, train, deploy, eval]
+repos:
+  dreamzero: ../../external/dreamzero
+  sim_repo: ../../external/humanoid_benchmark
+  g1_backend: ../../external/g1_backend
+paths:
+  dreamzero_data_root: datasets/gear
+  dreamzero_outputs: checkpoints/dreamzero
+  dreamzero_wan22: weights/Wan2.2-TI2V-5B
+  # Also supplies the CLIP image encoder when the wan22 backbone is selected.
+  dreamzero_wan21: weights/Wan2.1-I2V-14B-480P
+  dreamzero_tokenizer: weights/umt5-xxl
+  logs: runs
+  # Optional, only for --config-name wan21:
+  # dreamzero_pretrained: weights/DreamZero-AgiBot
+deploy: {}
+conda_envs:
+  dreamzero: dreamzero
+# Configure conda_root or paths.conda_setup for a nonstandard conda installation.

@@ -1,0 +1,13 @@
+include LICENSE README.md CONTRIBUTING.md DESIGN.md CHANGELOG.md AGENTS.md env.local.yaml.example .gitmodules uv.lock
+recursive-include docs *.md
+recursive-include policies *.md *.yaml
+recursive-include dependencies *.json *.md
+recursive-include scripts *.py *.sh *.md
+recursive-include tests *.py
+recursive-include src/locomanilab/configs *.yaml
+recursive-include src/locomanilab/runtime *.yaml
+recursive-include src/locomanilab/benchmark *.yaml
+prune external
+prune .claude
+prune .qa
+global-exclude __pycache__ *.py[cod]

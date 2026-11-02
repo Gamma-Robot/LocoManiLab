@@ -1,0 +1,40 @@
+# Per-task settings for the pinned humanoid_benchmark revision.
+#
+# A few tasks were evaluated before a later simulator change altered how they reset.
+# Each entry restores, for one env pinned to one scene (--scene-id), the configuration
+# the task was evaluated with. sim_client.py applies it to the task class before the env
+# is built and prints every applied setting; --no-task-overrides disables it. With these
+# entries the seeded initial-state digests of all evaluated tasks match the evaluation.
+#
+# <env>:
+#   <scene id>:
+#     inherit_methods: call the inherited implementation instead of the task's own
+#     fixed_attrs:     class attributes held at a value (assignments are ignored)
+#     scene_spec:      values merged into the scene's SCENE_SPECS entry
+#     scene_fixtures:  fixture MJCF files next to the scene XML, merged into the scene;
+#                      before_body keeps the body order of the original scene source
+
+IThorBedroomOpenDrawer:
+  329:
+    # Keep start-pose XY jitter around the calibrated stand pose (the revision pins
+    # the XY position and turns the jitter off).
+    inherit_methods: [_constrain_initial_jitter_candidate]
+    fixed_attrs:
+      INITIAL_ROBOT_JITTER_RADIUS: 0.1
+
+IThorLivingRoomApproachTableAndLiftWateringCan:
+  207:
+    # The tabletop box was still part of FloorPlan207 when this task was evaluated.
+    scene_fixtures:
+      - file: FloorPlan207_box.xml
+        before_body: vase_6cb319ff57e79d3745bd6ac29c8adb3d_1_0_0
+
+IThorLivingRoomApproachTableAndPutCandleInBasket:
+  207:
+    # Same box, and the basket/remote layout calibrated with it.
+    scene_fixtures:
+      - file: FloorPlan207_box.xml
+        before_body: vase_6cb319ff57e79d3745bd6ac29c8adb3d_1_0_0
+    scene_spec:
+      basket_pos: [-0.03, 0.448, 0.559]
+      remote_pos: [-0.03, 0.148, 0.559]

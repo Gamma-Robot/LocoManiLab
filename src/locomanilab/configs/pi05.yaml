@@ -1,0 +1,114 @@
+# pi05 integration defaults. Local paths belong in env.local.yaml.
+name: pi05
+embodiment: unitree_g1_sonic
+repo_key: openpi
+action:
+  dim: 78
+  layout:
+  - motion_token:64
+  - left_hand:7
+  - right_hand:7
+  note: openpi Pi0Config action_dim=80 (78 real + 2 pad); G1SonicOutputs slices back to 78.
+envs:
+  train:
+    kind: uv
+  deploy:
+    kind: uv
+  convert:
+    kind: uv
+variants:
+  sonic:
+    detect:
+      action:
+      - motion_token
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - motion_token
+      state:
+      - left_arm
+      - right_arm
+      - left_hand
+      - right_hand
+      - waist
+    config_name: pi05_bench_sonic_all31
+  heft:
+    detect:
+      action:
+      - ref_joint_pos
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - ref_root_pos
+      - ref_root_quat
+      - ref_joint_pos
+      state:
+      - left_leg
+      - right_leg
+      - waist
+      - left_arm
+      - right_arm
+    config_name: pi05_bench_heft_openfridge
+  amo:
+    unavailable_reason: >-
+      The pinned openpi AMO data factory produces one flat action array, while its
+      G1WbcInputs transform expects separate action and hands streams. AMO
+      normalization/training requires a coordinated fork recipe fix and validation.
+    detect:
+      action:
+      - torso_vx
+      - target_yaw
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - left_arm
+      - right_arm
+      - rpy
+      - height
+      - torso_vx
+      - torso_vy
+      - torso_vyaw
+      - target_yaw
+      state:
+      - left_hand
+      - right_hand
+      - left_arm
+      - right_arm
+      - rpy
+      - height
+    config_name: pi05_bench_amo_closefridge
+convert:
+  data_mix: pi05_g1_sonic
+  robot_type: G1NewFloatingBody
+  require_modality:
+    video:
+    - ego_view
+    action:
+    - motion_token
+    state:
+    - left_arm
+    - right_arm
+    - left_hand
+    - right_hand
+    - waist
+  compute_norm_stats: scripts/compute_norm_stats.py
+train:
+  entry: jax
+  jax_entrypoint: scripts/train.py
+  pytorch_entrypoint: scripts/train_pytorch.py
+  config_name: pi05_bench_sonic_all31
+  fsdp_env:
+    XLA_PYTHON_CLIENT_MEM_FRACTION: '0.9'
+deploy:
+  websocket_server: scripts/serve_policy.py
+  websocket_port: 8000
+  gr00t_server: deployment/run_openpi_server.py
+  prompt_fixed: test
+ckpt:
+  root: checkpoints/pi05_g1_sonic
+  run_glob: '*'
+  ckpt_glob: '*/params'
+support: Integration adapter; model execution requires its external backend and separately obtained weights.

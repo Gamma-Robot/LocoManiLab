@@ -1,0 +1,36 @@
+# act integration defaults. Local paths belong in env.local.yaml.
+name: act
+embodiment: unitree_g1_sonic
+repo_key: lerobot
+action:
+  dim: 78
+  layout:
+  - motion_token:64
+  - left_hand:7
+  - right_hand:7
+envs:
+  convert:
+    kind: uv
+  train:
+    kind: uv
+  deploy:
+    kind: uv
+convert:
+  script: lerobot/convert.py
+train:
+  entrypoint: src/lerobot/scripts/train.py
+  policy_type: act
+  steps: 20000
+  batch_size: 8
+  save_freq: 10000
+  num_workers: 4
+  policy_args:
+    chunk_size: 100
+    n_action_steps: 100
+deploy:
+  module: lerobot/server.py
+ckpt:
+  root: act
+  run_glob: '*'
+  ckpt_glob: checkpoints/*
+support: Integration adapter; model execution requires its external backend and separately obtained weights.

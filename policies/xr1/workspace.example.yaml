@@ -1,0 +1,17 @@
+# Intended destination: workspaces/xr1/env.local.yaml.
+schema_version: 2
+role: [data, train, deploy, eval]
+repos:
+  xr1: ../../external/Xiaomi-Robotics-1
+  sim_repo: ../../external/humanoid_benchmark
+  g1_backend: ../../external/g1_backend
+paths:
+  xr1_data_root: datasets/xr1
+  xr1_pretrained: weights/model_states_sonic80.pt
+  xr1_hf_home: cache/huggingface
+  xr1_outputs: checkpoints/xr1
+  logs: runs
+deploy: {}
+conda_envs:
+  xr1: xr1
+# Configure conda_root or paths.conda_setup for a nonstandard conda installation.

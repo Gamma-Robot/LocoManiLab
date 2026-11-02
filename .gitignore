@@ -1,0 +1,61 @@
+# machine-specific config — never commit
+env.local.yaml
+
+# run logs (locomanilab writes one canonical log per run here: runs/<model>/<stage>/<model>_<stage>_<ts>.log)
+runs/
+
+# model weights / checkpoints / training outputs — never commit to the LocoManiLab repository
+/models/
+/outputs/
+/outputs_sim/
+/outputs_real/
+/outputs_pre/
+/checkpoints/
+train_log*/
+downloads/
+outputs_eval/
+psi_home/
+*.pt
+*.pth
+*.safetensors
+*.ckpt
+*.engine
+*.onnx
+
+# python
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+build/
+dist/
+
+# local tool caches / stray data that shows up in `git status` on work/train boxes
+# (.gitignore has no inline comments — keep patterns on their own lines)
+# code-index daemon cache (codegraph.db, daemon.log)
+.codegraph/
+# datasets live outside the repo (env.local paths);
+# ignore any stray copy dropped at the repo root
+/datasets/
+/workspaces/
+# README quickstart workspace and scripts/hf/minimal_test.py default work dir
+/demo-workspace/
+/hf-minimal-test/
+.DS_Store
+# local assistant state
+.claude/
+
+# session scratch (temp scripts, fixtures) — never committed
+scratchpad/
+
+# editor workspace settings — per-machine
+.vscode/
+
+# development caches and local release artifacts
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv*/
+.release/
+.qa/

@@ -1,0 +1,60 @@
+name: CPU checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cpu:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+          lfs: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install CPU development tools
+        run: python -m pip install -e '.[dev,data]' build
+      - name: Lint and test without model repositories
+        run: |
+          ruff check src/locomanilab tests scripts
+          pytest -q
+          python scripts/release/check_public.py
+      - name: Replay policy guide CPU examples in a temporary source copy
+        run: python scripts/diagnostics/check_policy_guides.py
+      - name: Check dependency plans without downloads
+        run: |
+          python scripts/setup/profiles.py core --json
+          python scripts/setup/profiles.py sim --json
+          bash scripts/setup.sh lab --plan
+      - name: Build distribution artifacts
+        run: python -m build
+      - name: Smoke test the installed wheel outside the checkout
+        shell: bash
+        run: |
+          python -m venv "$RUNNER_TEMP/locomanilab-wheel-env"
+          wheel_path="$(python -c "from pathlib import Path; print(next(Path('dist').glob('locomanilab-*.whl')).resolve())")"
+          "$RUNNER_TEMP/locomanilab-wheel-env/bin/python" -m pip install "${wheel_path}[data]"
+          export PATH="$RUNNER_TEMP/locomanilab-wheel-env/bin:$PATH"
+          cd "$RUNNER_TEMP"
+          lab --help
+          locomanilab --help
+          soma --help
+          lab list-models
+          lab init wheel-smoke
+          cd wheel-smoke
+          lab sample-data --out datasets/example
+          lab validate datasets/example
+          lab prepare datasets/example --merge-only --out datasets/prepared
+          lab validate datasets/prepared

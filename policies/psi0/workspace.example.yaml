@@ -1,0 +1,18 @@
+# Intended destination: workspaces/psi0/env.local.yaml.
+schema_version: 2
+role: [data, train, deploy, eval]
+repos:
+  psi0: ../../external/Psi0
+  sim_repo: ../../external/humanoid_benchmark
+  g1_backend: ../../external/g1_backend
+paths:
+  psi0_data_root: datasets/psi0
+  psi0_home: cache/psi
+  # Match the two released checkpoint directories, not arbitrary empty folders.
+  psi0_vlm_base: weights/checkpoints/psi0/pre.fast.1by1.2601091803.ckpt.ego200k.he30k
+  psi0_action_expert: weights/checkpoints/psi0/postpre.1by1.pad36.2601131206.ckpt.he30k
+  psi0_outputs: checkpoints/psi0
+  logs: runs
+deploy: {}
+conda_envs: {}
+# Psi0 uses its checkout's .venv through uv; simulation has a separate environment.

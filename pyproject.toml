@@ -1,0 +1,50 @@
+[project]
+name = "locomanilab"
+version = "1.0.0"
+description = "Unified collect/convert/train/deploy pipeline for humanoid VLA/WAM models"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+dependencies = [
+    "typer>=0.12,<1",
+    "pyyaml>=6.0,<7",
+]
+
+[project.optional-dependencies]
+# Standalone sample-data, validate, and prepare workflows.
+data = ["pandas>=1.5,<3", "pyarrow>=10", "av>=12"]
+# Optional image inspection in scripts/diagnostics/preflight_sim.py.
+preflight = ["pillow>=9"]
+# Release downloads from the Hugging Face Hub (scripts/hf/).
+hf = ["huggingface_hub>=0.30", "pyarrow>=10", "zstandard>=0.21"]
+# tests + lint only; nothing here is needed to run locomanilab
+dev = ["pytest>=7,<10", "ruff>=0.4,<1"]
+
+[project.scripts]
+lab = "locomanilab.cli:main"
+# Compatibility commands for existing local workflows.
+locomanilab = "locomanilab.cli:main"
+soma = "locomanilab.cli:main"
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["locomanilab*"]
+
+[tool.setuptools.package-data]
+locomanilab = ["configs/*.yaml", "runtime/*.yaml", "benchmark/*.yaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+# correctness only (pyflakes + syntax); style is not gated
+select = ["E9", "F"]

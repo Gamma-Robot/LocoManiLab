@@ -1,0 +1,128 @@
+# starvla integration defaults. Local paths belong in env.local.yaml.
+name: starvla
+embodiment: unitree_g1_sonic
+repo_key: starvla
+default_framework: QwenGR00T
+action:
+  dim: 78
+  layout:
+  - motion_token:64
+  - left_hand:7
+  - right_hand:7
+  note: G1 -> 78-D (motion_token 64 + hands 14), matches the other models' deploy output.
+envs:
+  convert:
+    kind: conda
+    name: starVLA
+  train:
+    kind: conda
+    name: starVLA
+  deploy:
+    kind: conda
+    name: starVLA
+variants:
+  sonic:
+    detect:
+      action:
+      - motion_token
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - motion_token
+      state:
+      - left_arm
+      - right_arm
+      - left_hand
+      - right_hand
+      - waist
+    data_mix: sonic_g1
+    robot_type: unitree_g1_sonic
+    action_dim: 78
+    state_dim: 43
+  heft:
+    detect:
+      action:
+      - ref_joint_pos
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - ref_root_pos
+      - ref_root_quat
+      - ref_joint_pos
+      state:
+      - left_leg
+      - right_leg
+      - waist
+      - left_arm
+      - right_arm
+    data_mix: heft_g1
+    robot_type: unitree_g1_heft
+    action_dim: 50
+    state_dim: 29
+  amo:
+    detect:
+      action:
+      - torso_vx
+      - target_yaw
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - left_arm
+      - right_arm
+      - rpy
+      - height
+      - torso_vx
+      - torso_vy
+      - torso_vyaw
+      - target_yaw
+      state:
+      - left_hand
+      - right_hand
+      - left_arm
+      - right_arm
+      - rpy
+      - height
+    data_mix: amo_g1
+    robot_type: unitree_g1_amo
+    action_dim: 36
+    state_dim: 32
+convert:
+  data_mix: sonic_g1
+  robot_type: unitree_g1_sonic
+  require_modality:
+    video:
+    - ego_view
+    action:
+    - motion_token
+    state:
+    - left_arm
+    - right_arm
+    - left_hand
+    - right_hand
+    - waist
+train:
+  entrypoint: starVLA/training/train_starvla.py
+  accelerate_config: starVLA/config/deepseeds/deepspeed_zero2.yaml
+  config_yaml: starVLA/config/training/starvla_cotrain_oxe.yaml
+  base_vlm: StarVLA/Qwen3-VL-4B-Instruct-Action
+  default_data_mix: sonic_g1
+  default_run_root: results/Checkpoints
+  ckpt_glob: '*/checkpoints/steps_*_pytorch_model.pt'
+  action_dim: 78
+  state_dim: 43
+  wandb_offline: true
+deploy:
+  module: deployment.model_server.run_starvla_server
+  prompt_fixed: test
+  state_mode: raw
+  use_bf16: true
+  native_server: deployment/model_server/server_policy.py
+  native_port: 10093
+ckpt:
+  root: results/Checkpoints
+  run_glob: '*'
+  ckpt_glob: checkpoints/steps_*_pytorch_model.pt
+support: Integration adapter; model execution requires its external backend and separately obtained weights.

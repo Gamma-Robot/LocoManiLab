@@ -1,0 +1,108 @@
+# psi0 integration defaults. Local paths belong in env.local.yaml.
+name: psi0
+embodiment: unitree_g1_sonic
+repo_key: psi0
+action:
+  dim: 78
+  layout:
+  - motion_token:64
+  - left_hand:7
+  - right_hand:7
+envs:
+  convert:
+    kind: uv
+  train:
+    kind: uv
+  deploy:
+    kind: uv
+convert:
+  stats_script: scripts/data/calc_modality_stats.py
+variants:
+  sonic:
+    detect:
+      action:
+      - motion_token
+    script: scripts/data/locomanilab_sonic_to_psi_lerobot.py
+    trainer: sonic
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - motion_token
+      - left_hand_joints
+      - right_hand_joints
+      state:
+      - joint_pos
+    action_dim: 78
+    state_dim: 43
+  amo:
+    detect:
+      action:
+      - torso_vx
+      - target_yaw
+    script: scripts/data/locomanilab_amo_to_psi_lerobot.py
+    trainer: amo
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - left_arm
+      - right_arm
+      - rpy
+      - height
+      - torso_vx
+      - torso_vy
+      - torso_vyaw
+      - target_yaw
+      state:
+      - left_hand
+      - right_hand
+      - left_arm
+      - right_arm
+      - rpy
+      - height
+    action_dim: 36
+    state_dim: 32
+  heft:
+    detect:
+      action:
+      - ref_joint_pos
+    script: scripts/data/locomanilab_heft_to_psi_lerobot.py
+    trainer: heft
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - ref_root_pos
+      - ref_root_quat
+      - ref_joint_pos
+      state:
+      - left_leg
+      - right_leg
+      - waist
+      - left_arm
+      - right_arm
+    action_dim: 50
+    state_dim: 29
+train:
+  entrypoint: scripts/train.py
+  config_name: finetune_real_psi0_config
+  trainer_name: sonic
+  action_dim: 78
+  state_dim: 43
+  action_chunk_size: 30
+  train_batch_size: 16
+  learning_rate: 1e-4
+  max_training_steps: 20000
+  checkpointing_steps: 5000
+  warmup_steps: 1000
+  wandb_offline: true
+  num_workers: 4
+deploy:
+  module: src/psi/deploy/run_psi0_server.py
+  num_inference_steps: 8
+ckpt:
+  root: sonic
+  run_glob: '*'
+  ckpt_glob: checkpoints/ckpt_*
+support: Integration adapter; model execution requires its external backend and separately obtained weights.

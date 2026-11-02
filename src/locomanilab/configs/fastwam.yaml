@@ -1,0 +1,99 @@
+# fastwam integration defaults. Local paths belong in env.local.yaml.
+name: fastwam
+embodiment: unitree_g1_sonic
+repo_key: fastwam
+action:
+  dim: 78
+  layout:
+  - motion_token:64
+  - left_hand:7
+  - right_hand:7
+default_action_space: motion_token
+action_spaces:
+  motion_token:
+    overrides: []
+  smpl:
+    overrides:
+    - data.train.shape_meta.action.0.key=smpl_joints
+    - +data.train.shape_meta.action.0.lerobot_key=teleop.smpl_joints
+    - data.train.shape_meta.action.0.raw_shape=72
+    - data.train.shape_meta.action.0.shape=72
+    - data.train.processor.action_output_dim=86
+envs:
+  convert:
+    kind: conda
+    name: fastwam
+  train:
+    kind: conda
+    name: fastwam
+  deploy:
+    kind: conda
+    name: fastwam
+variants:
+  sonic:
+    detect:
+      action:
+      - motion_token
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - motion_token
+    data_config_name: custom_1cam
+    task: custom_1cam_1e-4
+  heft:
+    detect:
+      action:
+      - ref_root_pos
+      - ref_joint_pos
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - ref_root_pos
+      - ref_root_quat
+      - ref_joint_pos
+    data_config_name: custom_1cam_heft14
+    task: custom_1cam_heft14_1e-4
+  amo:
+    detect:
+      action:
+      - torso_vx
+      - target_yaw
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - left_arm
+      - right_arm
+      - rpy
+      - height
+      - torso_vx
+      - torso_vy
+      - torso_vyaw
+      - target_yaw
+    data_config_name: custom_1cam_amo
+    task: custom_1cam_amo_1e-4
+convert:
+  data_config_name: custom_1cam
+  model_config: configs/model/fastwam.yaml
+  backbone_out: checkpoints/ActionDiT_linear_interp_Wan22_alphascale_1024hdim.pt
+train:
+  launcher: scripts/train_zero1.sh
+  default_task: custom_1cam_1e-4
+  ckpt_glob: runs/*/checkpoints/weights/step_*.pt
+deploy:
+  launcher: start_inference_fastwam.sh
+  server: deployment/run_fastwam_server.py
+  base_model_rel: checkpoints/Wan-AI/Wan2.2-TI2V-5B
+  prompt_fixed: 'A video recorded from a robot''s point of view executing the following instruction: test'
+  env_overrides:
+    NUM_INFERENCE_STEPS: 10
+    EVICT_T5: 1
+ckpt:
+  root: runs
+  run_glob: '*/*'
+  ckpt_glob:
+  - step_*.pt
+  - checkpoints/weights/step_*.pt
+support: Integration adapter; model execution requires its external backend and separately obtained weights.

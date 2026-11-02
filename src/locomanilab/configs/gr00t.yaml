@@ -1,0 +1,129 @@
+# gr00t integration defaults. Local paths belong in env.local.yaml.
+name: gr00t
+embodiment: unitree_g1_sonic
+repo_key: isaac_gr00t
+action:
+  dim: 64
+  layout:
+  - motion_token:64
+envs:
+  train:
+    kind: uv
+  deploy:
+    kind: venv
+convert: {}
+default_action_space: motion_token
+action_spaces:
+  motion_token:
+    embodiment_tag: UNITREE_G1_SONIC
+  smpl:
+    embodiment_tag: UNITREE_G1_SONIC_REFMOTION_JOINTS_BENCHMARK_SMI
+variants:
+  sonic:
+    detect:
+      action:
+      - motion_token
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - motion_token
+    embodiment_tag: UNITREE_G1_SONIC
+  heft:
+    detect:
+      action:
+      - ref_root_pos
+      - ref_joint_pos
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - ref_root_pos
+      - ref_root_quat
+      - ref_joint_pos
+      state:
+      - left_leg
+      - right_leg
+      - waist
+      - left_arm
+      - right_arm
+      - projected_gravity
+    embodiment_tag: UNITREE_G1_HEFT
+  amo:
+    detect:
+      action:
+      - torso_vx
+      - target_yaw
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - left_arm
+      - right_arm
+      - rpy
+      - height
+      - torso_vx
+      - torso_vy
+      - torso_vyaw
+      - target_yaw
+      state:
+      - left_hand
+      - right_hand
+      - left_arm
+      - right_arm
+      - rpy
+      - height
+    embodiment_tag: UNITREE_G1_AMO
+  almi:
+    detect:
+      action:
+      - lin_vel
+      - waist_rpy
+    require_modality:
+      video:
+      - ego_view
+      action:
+      - lin_vel
+      - ang_vel_z
+      - base_height
+      - waist_rpy
+      - left_ee_pos
+      - right_ee_pos
+      - left_ee_quat
+      - right_ee_quat
+      - ref_joint_pos
+      state:
+      - left_leg
+      - right_leg
+      - waist
+      - left_arm
+      - right_arm
+      - projected_gravity
+    embodiment_tag: UNITREE_G1_ALMI
+train:
+  launcher: gr00t/experiment/launch_finetune.py
+  embodiment_tag: UNITREE_G1_SONIC
+  modality_config: gr00t/configs/data/embodiment_configs.py
+  defaults:
+    save_steps: 20000
+    max_steps: 100000
+    per_gpu_batch: 256
+    save_total_limit: 5
+    dataloader_num_workers: 4
+  extra_args:
+  - --color-jitter-params
+  - brightness
+  - '0.3'
+  - contrast
+  - '0.4'
+  - saturation
+  - '0.5'
+  - hue
+  - '0.08'
+deploy:
+  launcher: start_inference.sh
+ckpt:
+  root: outputs/gr00t_log
+  run_glob: '*'
+  ckpt_glob: checkpoint-*
+support: Integration adapter; model execution requires its external backend and separately obtained weights.
