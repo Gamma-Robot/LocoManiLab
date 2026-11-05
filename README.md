@@ -1,6 +1,17 @@
-# LocoManiLab
+<p align="center">
+  <img src="docs/assets/locomanilab-logo.png" alt="LocoManiLab" width="560">
+</p>
 
-A local workflow tool for humanoid policy research: **collect → prepare → convert → train → evaluate → deploy**.
+<h1 align="center">LocoManiLab: A Unified Testbed for Data, Policies, Controllers, and Deployment in Humanoid Loco-Manipulation</h1>
+
+<p align="center">
+  <a href="https://arxiv.org/abs/2610.30876"><img src="https://img.shields.io/badge/Paper-arXiv%202610.30876-b31b1b.svg" alt="Paper"></a>
+  <a href="https://locomanilab.github.io"><img src="https://img.shields.io/badge/Website-locomanilab.github.io-2f6feb.svg" alt="Website"></a>
+  <a href="https://huggingface.co/datasets/GammaRobotics/LocoManiLab"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Dataset-GammaRobotics%2FLocoManiLab-ffcc4d.svg" alt="Hugging Face dataset"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License"></a>
+</p>
+
+LocoManiLab is a local workflow tool for humanoid policy research: **collect → prepare → convert → train → evaluate → deploy**.
 
 LocoManiLab keeps dataset contracts, model adapters, and process orchestration in one small Python package. Model training, simulators, and robot controllers run in their own environments. You can use the CPU data tools without any model repositories, GPU, robot, or pretrained weights.
 

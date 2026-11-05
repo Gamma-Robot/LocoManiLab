@@ -20,6 +20,8 @@ SKIP_PARTS = {"__pycache__", ".pytest_cache", ".ruff_cache", ".git", "node_modul
 ASSET_SUFFIXES = {".pt", ".pth", ".ckpt", ".safetensors", ".onnx", ".engine", ".parquet", ".mp4", ".npz"}
 LOCAL_FILES = {".env", "env.local.yaml", "env.local.yml", ".netrc", ".pypirc"}
 MAX_FILE_BYTES = 20 * 1024 * 1024
+# Binary files reviewed for publication; any other binary needs explicit review.
+REVIEWED_BINARIES = {"docs/assets/locomanilab-logo.png"}
 
 
 def public_paths(root: Path):
@@ -58,6 +60,8 @@ def check(root: Path) -> list[str]:
             continue
         if path.stat().st_size > MAX_FILE_BYTES:
             findings.append(f"{relative}: unexpected file over 20 MiB")
+            continue
+        if relative.as_posix() in REVIEWED_BINARIES:
             continue
         content = path.read_bytes()
         try:
