@@ -21,7 +21,7 @@ ASSET_SUFFIXES = {".pt", ".pth", ".ckpt", ".safetensors", ".onnx", ".engine", ".
 LOCAL_FILES = {".env", "env.local.yaml", "env.local.yml", ".netrc", ".pypirc"}
 MAX_FILE_BYTES = 20 * 1024 * 1024
 # Binary files reviewed for publication; any other binary needs explicit review.
-REVIEWED_BINARIES = {"docs/assets/locomanilab-logo.png"}
+REVIEWED_BINARIES = {"docs/assets/locomanilab-logo.png", "docs/assets/locomanilab-overview.jpg"}
 
 
 def public_paths(root: Path):
